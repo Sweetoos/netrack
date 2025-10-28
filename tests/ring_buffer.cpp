@@ -13,8 +13,8 @@ public:
 
 TEST_F(RingBufferFixture, IsInittialyEmpty)
 {
-    ASSERT_TRUE(buffer.isEmpty());
-    ASSERT_FALSE(buffer.isFull());
+    ASSERT_TRUE(buffer.isEmptyLock());
+    ASSERT_FALSE(buffer.isFullLock());
 }
 
 TEST_F(RingBufferFixture, PushAndPop)
@@ -40,22 +40,23 @@ TEST_F(RingBufferFixture, FullBufferHandling)
         ASSERT_TRUE(buffer.tryPush(test_packet));
     }
 
-    ASSERT_TRUE(buffer.isFull());
-    ASSERT_EQ(buffer.getSize(), BUFFER_SIZE);
+    ASSERT_TRUE(buffer.isFullLock());
+    ASSERT_EQ(buffer.getSizeLock(), BUFFER_SIZE);
 
     ASSERT_FALSE(buffer.tryPush(test_packet));
 
-    ASSERT_TRUE(buffer.isFull());
-    ASSERT_EQ(buffer.getSize(), BUFFER_SIZE);
+    ASSERT_TRUE(buffer.isFullLock());
+    ASSERT_EQ(buffer.getSizeLock(), BUFFER_SIZE);
 }
 
 TEST_F(RingBufferFixture, EmptyBufferHandling)
 {
     PacketData received;
     ASSERT_FALSE(buffer.tryPop(received));
-    ASSERT_TRUE(buffer.isEmpty());
-    ASSERT_EQ(buffer.getSize(), 0);
+    ASSERT_TRUE(buffer.isEmptyLock());
+    ASSERT_EQ(buffer.getSizeLock(), 0);
 }
+
 TEST_F(RingBufferFixture, WrappingAndFIFO)
 {
     for (int i = 1; i <= 3; i++)
@@ -74,7 +75,7 @@ TEST_F(RingBufferFixture, WrappingAndFIFO)
         ASSERT_TRUE(buffer.tryPush(PacketData(nullptr, i)));
     }
     int expected_id = 3;
-    while (!buffer.isEmpty())
+    while (!buffer.isEmptyLock())
     {
         PacketData received;
         ASSERT_TRUE(buffer.tryPop(received));

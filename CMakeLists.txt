@@ -24,6 +24,8 @@ endif()
 
 add_library(netrack_lib STATIC
     src/RingBuffer.cpp
+    src/ConsumerPacket.cpp
+    src/ProducerPacket.cpp
 )
 target_compile_options(netrack_lib PRIVATE -Wall -Wextra -Wpedantic -g)
 

@@ -1,12 +1,14 @@
 #ifndef RINGBUFFER_H
 #define RINGBUFFER_H
 
+#include <mutex>
 #include <vector>
 #include "PacketData.h"
 
 class RingBuffer
 {
 private:
+    std::mutex mtx;
     std::vector<PacketData> packets;
     int head;
     int tail;
@@ -17,10 +19,14 @@ public:
     RingBuffer(const int c);
     bool tryPush(const PacketData& item);
     bool tryPop(PacketData& item);
-    bool isEmpty() const;
-    bool isFull() const;
-    int getSize() const;
-    int getCapacity() const;
+    bool isEmpty();
+    bool isEmptyLock();
+    bool isFull();
+    bool isFullLock();
+    int getSize();
+    int getSizeLock();
+    int getCapacity();
+    int getCapacityLock();
 };
 
 #endif  // !RINGBUFFER_H

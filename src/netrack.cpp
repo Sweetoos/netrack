@@ -1,35 +1,23 @@
 // #include <pcap.h>
-#include <iostream>
-#include "RingBuffer.h"
+#include <print>
+#include <thread>
+#include "ConsumerPacket.h"
+#include "ProducerPacket.h"
 
 int main()
 {
-    const int capacity = 4;
-    RingBuffer buffer(capacity);
+    constexpr int BUFFER_CAP = 16;
+    RingBuffer shared_buffer(BUFFER_CAP);
+    std::println("factory created, buffer cap: {0}", BUFFER_CAP);
+    ProducerPacket pp(shared_buffer);
+    ConsumerPacket cp(shared_buffer);
 
-    const uint8_t my_data[] = {0x00, 0x04, 0x08, 0x0C};
+    std::println("thread create");
+    std::thread pt(&ProducerPacket::run, &pp);
+    std::thread ct(&ConsumerPacket::run, &cp);
 
-    if (buffer.tryPush(PacketData(my_data, sizeof(my_data))))
-        std::cout << "buffer success, buffer size: " << buffer.getSize()
-                  << std::endl;
-    else
-        std::cout << "buffer full" << std::endl;
+    pt.join();
+    ct.join();
 
-    std::cout << "retrieving data" << std::endl;
-
-    PacketData received;
-
-    if (buffer.tryPop(received))
-    {
-        std::cout << "success, retrieved packet size: " << buffer.getSize()
-                  << std::endl;
-        if ((received.len == sizeof(my_data)) && (received.data[0] == 0x00))
-            std::cout << "data is correct" << std::endl;
-        else
-            std::cout << "data is incorrect" << std::endl;
-    }
-    else
-    {
-        std::cout << "buffer is empty" << std::endl;
-    }
+    std::println("simulation ended");
 }

@@ -1,8 +1,8 @@
 #ifndef PACKETDATA_H
 #define PACKETDATA_H
 
+#include <stdint.h>
 #include <cstdint>
-#include <iostream>
 
 struct PacketData
 {
