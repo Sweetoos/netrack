@@ -5,9 +5,11 @@
 
 PacketData ProducerPacket::createFakePacket()
 {
-    packet_counter++;
-    PacketData packet(0, packet_counter);
+    PacketData packet;
+    packet.data.resize(20);
+    packet.data[0]=packet_counter;
     std::println("created {0} packet ", packet_counter);
+    packet_counter++;
     return packet;
 }
 
@@ -17,7 +19,7 @@ void ProducerPacket::run()
     while (true)
     {
         PacketData packet = createFakePacket();
-        buffer.tryPush(packet);
+        buffer.push(packet);
         std::this_thread::sleep_for(500ms);
     }
 }

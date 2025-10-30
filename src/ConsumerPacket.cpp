@@ -1,11 +1,15 @@
 #include "ConsumerPacket.h"
+#include <chrono>
 #include <print>
 #include <thread>
-#include <chrono>
 
 void ConsumerPacket::processPacket(const PacketData &packet)
 {
-    std::println("received packet no. {0} ", packet.len);
+    if (!packet.data.empty())
+    {
+        uint8_t packet_id = packet.data[0];
+        std::println("received packet no. {0} ", packet_id);
+    }
 }
 
 void ConsumerPacket::run()
@@ -14,7 +18,7 @@ void ConsumerPacket::run()
     while (true)
     {
         PacketData packet(nullptr, 0);
-        buffer.tryPop(packet);
+        buffer.pop(packet);
         processPacket(packet);
         std::this_thread::sleep_for(500ms);
     }

@@ -1,6 +1,8 @@
 #include <gtest/gtest.h>
 #include "RingBuffer.h"
 
+#include <cstring>
+
 class RingBufferFixture : public ::testing::Test
 {
 protected:
@@ -25,10 +27,10 @@ TEST_F(RingBufferFixture, PushAndPop)
 
     PacketData received;
     ASSERT_TRUE(buffer.tryPop(received));
-    ASSERT_EQ(received.len, sent_packet.len);
-    ASSERT_NE(received.data, nullptr);
+    ASSERT_EQ(received.data.size(), sent_packet.data.size());
+    ASSERT_NE(received.data.data(), nullptr);
 
-    ASSERT_EQ(memcmp(received.data, sent_packet.data, sent_packet.len), 0);
+    ASSERT_EQ(received.data, sent_packet.data);
 }
 
 TEST_F(RingBufferFixture, FullBufferHandling)
@@ -59,27 +61,34 @@ TEST_F(RingBufferFixture, EmptyBufferHandling)
 
 TEST_F(RingBufferFixture, WrappingAndFIFO)
 {
-    for (int i = 1; i <= 3; i++)
+    for (uint8_t i = 1; i <= 3; i++)
     {
-        ASSERT_TRUE(buffer.tryPush(PacketData(nullptr, i)));
+        PacketData packet;
+        packet.data.push_back(i);
+        ASSERT_TRUE(buffer.tryPush(packet));
     }
 
-    for (int i = 1; i <= 2; i++)
+    for (uint8_t i = 1; i <= 2; i++)
     {
         PacketData received;
         ASSERT_TRUE(buffer.tryPop(received));
-        ASSERT_EQ(received.len, i);
+        ASSERT_EQ(received.data.size(), 1);
+        ASSERT_EQ(received.data[0], i);
     }
-    for (int i = 4; i <= 6; i++)
+    for (uint8_t i = 4; i <= 6; i++)
     {
-        ASSERT_TRUE(buffer.tryPush(PacketData(nullptr, i)));
+        PacketData packet;
+        packet.data.push_back(i);
+        ASSERT_TRUE(buffer.tryPush(packet));
     }
     int expected_id = 3;
-    while (!buffer.isEmptyLock())
+    PacketData received;
+    while (buffer.tryPop(received))
     {
-        PacketData received;
-        ASSERT_TRUE(buffer.tryPop(received));
-        ASSERT_EQ(received.len, expected_id);
+        ASSERT_EQ(received.data.size(), 1);
+        ASSERT_EQ(received.data[0], expected_id);
         expected_id++;
     }
+    ASSERT_TRUE(buffer.isEmptyLock());
+    ASSERT_EQ(expected_id, 7);
 }

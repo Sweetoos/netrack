@@ -29,6 +29,26 @@ bool RingBuffer::tryPop(PacketData &item)
     return true;
 }
 
+void RingBuffer::push(const PacketData &item)
+{
+    std::unique_lock lock(mtx);
+    not_full_cv.wait(lock, [this] { return !isFull(); });
+    packets[head] = item;
+    head = (head + 1) % capacity;
+    size++;
+    not_empty_cv.notify_one();
+}
+
+void RingBuffer::pop(PacketData &item)
+{
+    std::unique_lock lock(mtx);
+    not_empty_cv.wait(lock, [this] { return !isEmpty(); });
+    item = packets[tail];
+    tail = (tail + 1) % capacity;
+    size--;
+    not_full_cv.notify_one();
+}
+
 bool RingBuffer::isEmpty() { return this->size == 0; }
 
 bool RingBuffer::isFull() { return this->size == this->capacity; }

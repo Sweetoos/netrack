@@ -3,13 +3,13 @@
 
 #include <stdint.h>
 #include <cstdint>
+#include <vector>
 
 struct PacketData
 {
-    const uint8_t* data;
-    int len;
-    PacketData() : data(nullptr), len(0) {}
-    PacketData(const uint8_t* data, int length) : data(data), len(length) {}
+    std::vector<uint8_t> data;
+    PacketData() = default;
+    PacketData(const uint8_t* data, int length) : data(data, data + length) {}
 };
 
 #endif  // !PACKETDATA_H
