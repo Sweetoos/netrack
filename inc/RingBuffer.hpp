@@ -4,7 +4,7 @@
 #include <condition_variable>
 #include <mutex>
 #include <vector>
-#include "PacketData.h"
+#include "PacketData.hpp"
 
 class RingBuffer
 {

@@ -1,8 +1,8 @@
 #ifndef CONSUMERPACKET_H
 #define CONSUMERPACKET_H
 
-#include "PacketData.h"
-#include "RingBuffer.h"
+#include "PacketData.hpp"
+#include "RingBuffer.hpp"
 
 class ConsumerPacket
 {

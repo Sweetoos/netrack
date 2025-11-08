@@ -1,6 +1,5 @@
 #include <gtest/gtest.h>
-#include "RingBuffer.h"
-
+#include "RingBuffer.hpp"
 #include <cstring>
 
 class RingBufferFixture : public ::testing::Test

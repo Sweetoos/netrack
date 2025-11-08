@@ -1,4 +1,4 @@
-#include "RingBuffer.h"
+#include "RingBuffer.hpp"
 #include <condition_variable>
 
 RingBuffer::RingBuffer(const int c) : packets(c)
