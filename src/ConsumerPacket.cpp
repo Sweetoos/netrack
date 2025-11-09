@@ -3,12 +3,13 @@
 #include <print>
 #include <thread>
 
-void ConsumerPacket::processPacket(const PacketData &packet)
+void ConsumerPacket::processPacket(const PacketData& packet)
 {
     if (!packet.data.empty())
     {
         uint8_t packet_id = packet.data[0];
-        std::println("received packet no. {0} ", packet_id);
+        std::println("received packet no. {} with data: {}", packet_id,
+                     packet.data.data());
     }
 }
 
