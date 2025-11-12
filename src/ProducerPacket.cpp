@@ -1,8 +1,6 @@
 #include "ProducerPacket.hpp"
 #include <pcap/pcap.h>
-#include <chrono>
 #include <print>
-#include <thread>
 
 PacketData ProducerPacket::createFakePacket()
 {
@@ -16,7 +14,6 @@ PacketData ProducerPacket::createFakePacket()
 
 void ProducerPacket::run()
 {
-    using namespace std::chrono_literals;
 
     if (interface_name.empty())
     {
@@ -51,7 +48,6 @@ void ProducerPacket::run()
             pcap_perror(pcap_handler, " packet not captured\n");
             break;
         }
-        std::this_thread::sleep_for(500ms);
     }
 
     if (pcap_handler != nullptr)

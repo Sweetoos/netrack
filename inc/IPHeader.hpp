@@ -12,8 +12,8 @@ struct IPHeader
     uint16_t identification;
     uint16_t flags_and_fragment_offset;
 
-    uint8_t protocol;
     uint8_t ttl;
+    uint8_t protocol;
     uint16_t header_checksum;
 
     uint32_t dest_addr;
